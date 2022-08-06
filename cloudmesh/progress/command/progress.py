@@ -1,8 +1,9 @@
-from cloudmesh.common.debug import VERBOSE
+from cloudmesh.common.util import banner
 from cloudmesh.shell.command import PluginCommand
 from cloudmesh.shell.command import command
 from cloudmesh.shell.command import map_parameters
-from cloudmesh.common.parameter import Parameter
+from cloudmesh.common.debug import VERBOSE
+
 
 class ProgressCommand(PluginCommand):
 
@@ -13,7 +14,7 @@ class ProgressCommand(PluginCommand):
         ::
 
           Usage:
-                progress PROGRESS [--status=STATUS] [--pid=PID] [--now] [KEY=VALUE...] [--sep=SEP]
+                progress PROGRESS [--status=STATUS] [--pid=PID] [--now] [KEY=VALUE...] [--sep=SEP] [--banner]
 
           Prints a progress line of the form
 
@@ -29,6 +30,7 @@ class ProgressCommand(PluginCommand):
               --pid=PID            the PID
               --now                add a time of now
               --sep=SEP            separator when adding key=values
+              --banner             creates also a banner when specified [default: None]
 
           Description:
 
@@ -45,7 +47,7 @@ class ProgressCommand(PluginCommand):
 
         values = arguments["KEY=VALUE"]
 
-        map_parameters(arguments, "sep", "status", "pid", "now")
+        map_parameters(arguments, "sep", "status", "pid", "now", "banner")
 
         if arguments.sep is None:
             arguments.sep = " "
@@ -55,8 +57,11 @@ class ProgressCommand(PluginCommand):
         else:
             values = None
 
-        from cloudmesh.common.StopWatch import progress
+        # VERBOSE(arguments)
 
-        progress(status=arguments.status, progress=arguments.PROGRESS, pid=arguments.pid, time=arguments["--now"], stdout=True, append=values)
+        from cloudmesh.common.StopWatch import progress
+        progress(status=arguments.status, progress=arguments.PROGRESS, pid=arguments.pid, time=arguments["--now"], stdout=True, append=values, with_banner=arguments.banner)
+
+
 
         return ""
