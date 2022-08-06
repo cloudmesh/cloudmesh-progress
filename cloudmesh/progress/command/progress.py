@@ -60,7 +60,15 @@ class ProgressCommand(PluginCommand):
         # VERBOSE(arguments)
 
         from cloudmesh.common.StopWatch import progress
-        progress(status=arguments.status, progress=arguments.PROGRESS, pid=arguments.pid, time=arguments["--now"], stdout=True, append=values, with_banner=arguments.banner)
+
+        progress(status=arguments.status,
+                 progress=arguments.PROGRESS,
+                 pid=arguments.pid,
+                 time=arguments["--now"],
+                 stdout=True,
+                 stderr=True,
+                 append=values,
+                 with_banner=arguments.banner)
 
 
 
