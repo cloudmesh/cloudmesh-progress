@@ -1,14 +1,8 @@
-from cloudmesh.shell.command import command
-from cloudmesh.shell.command import PluginCommand
-from cloudmesh.progress.api.manager import Manager
-from cloudmesh.common.console import Console
-from cloudmesh.common.util import path_expand
-from pprint import pprint
 from cloudmesh.common.debug import VERBOSE
+from cloudmesh.shell.command import PluginCommand
+from cloudmesh.shell.command import command
 from cloudmesh.shell.command import map_parameters
 from cloudmesh.common.parameter import Parameter
-from cloudmesh.common.variables import Variables
-from cloudmesh.common.util import banner
 
 class ProgressCommand(PluginCommand):
 
@@ -19,33 +13,29 @@ class ProgressCommand(PluginCommand):
         ::
 
           Usage:
-                progress --file=FILE
-                progress list
-                progress [--parameter=PARAMETER] [--experiment=EXPERIMENT] [COMMAND...]
+                progress PROGRESS [--status=STATUS] [--pid=PID] [--now] [KEY=VALUE...] [--sep=SEP]
 
-          This command does some useful things.
+          Prints a progress line of the form
+
+
+           "# cloudmesh status=ready progress=0 pid=$$ time='2022-08-05 16:29:40.228901' key1=value1 key2=value2"
 
           Arguments:
-              FILE   a file name
-              PARAMETER  a parameterized parameter of the form "a[0-3],a5"
+              PROGRESS   the progess in value from 0 to 100
+              KEY=VALUE   the key value pars to be added
 
           Options:
-              -f      specify the file
+              --status=STATUS      the status [default: running]
+              --pid=PID            the PID
+              --now                add a time of now
+              --sep=SEP            separator when adding key=values
 
           Description:
 
-            > cms progress --parameter="a[1-2,5],a10"
-            >    example on how to use Parameter.expand. See source code at
-            >      https://github.com/cloudmesh/cloudmesh-progress/blob/main/cloudmesh/progress/command/progress.py
-            >    prints the expanded parameter as a list
-            >    ['a1', 'a2', 'a3', 'a4', 'a5', 'a10']
-
-            > progress exp --experiment=a=b,c=d
-            > example on how to use Parameter.arguments_to_dict. See source code at
-            >      https://github.com/cloudmesh/cloudmesh-progress/blob/main/cloudmesh/progress/command/progress.py
-            > prints the parameter as dict
-            >   {'a': 'b', 'c': 'd'}
-
+            The example
+                progress 50 --status=running --pid=101 --now user=gregor
+            produces
+                # cloudmesh status=running progress=0 pid=123 time='2022-08-05 16:29:40.228901' user=gregor
         """
 
 
@@ -53,54 +43,20 @@ class ProgressCommand(PluginCommand):
 
         # switch debug on
 
-        variables = Variables()
-        variables["debug"] = True
+        values = arguments["KEY=VALUE"]
 
-        banner("original arguments", color="RED")
+        map_parameters(arguments, "sep", "status", "pid", "now")
 
-        VERBOSE(arguments)
+        if arguments.sep is None:
+            arguments.sep = " "
 
-        banner("rewriting arguments so we can use . notation for file, parameter, and experiment", color="RED")
+        if len(values) > 0:
+            values = (arguments.sep).join(values)
+        else:
+            values = None
 
-        map_parameters(arguments, "file", "parameter", "experiment")
+        from cloudmesh.common.StopWatch import progress
 
-        VERBOSE(arguments)
-
-        banner("rewriting arguments so we convert to appropriate types for easier handeling", color="RED")
-
-        arguments = Parameter.parse(arguments,
-                                    parameter='expand',
-                                    experiment='dict',
-                                    COMMAND='str')
-
-
-        VERBOSE(arguments)
-
-        banner("showcasing tom simple if parsing based on teh dotdict", color="RED")
-
-        m = Manager()
-
-        #
-        # It is important to keep the programming here to a minimum and any substantial programming ought
-        # to be conducted in a separate class outside the command parameter manipulation. If between the
-        # elif statement you have more than 10 lines, you may consider putting it in a class that you import
-        # here and have propper methods in that class to handle the functionality. See the Manager class for
-        # an example.
-        #
-
-        if arguments.file:
-            print("option a")
-            m.list(path_expand(arguments.file))
-
-        elif arguments.list:
-            print("option b")
-            m.list("just calling list without parameter")
-
-
-        Console.error("This is just a sample of an error")
-        Console.warning("This is just a sample of a warning")
-        Console.info("This is just a sample of an info")
-
-        Console.info(" You can witch debugging on and off with 'cms debug on' or 'cms debug off'")
+        progress(status=arguments.status, progress=arguments.PROGRESS, pid=arguments.pid, time=arguments["--now"], stdout=True, append=values)
 
         return ""
