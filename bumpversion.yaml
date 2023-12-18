@@ -1,0 +1,3 @@
+bumpversion:
+- cloudmesh/progress/__version__.py
+- VERSION
