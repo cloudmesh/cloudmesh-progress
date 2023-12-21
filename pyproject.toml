@@ -52,8 +52,13 @@ dependencies = [
     "toml",
     "cloudmesh-cmd5",
 ]
+
 [project.urls]
-"Documentation" = "https://github.com/cloudmesh/cloudmesh-common"
+Homepage = "https://github.com/cloudmesh/cloudmesh-progress"
+Documentation = "https://github.com/cloudmesh/cloudmesh-progress/blob/main/README.md"
+Repository = "https://github.com/cloudmesh/cloudmesh-progress.git"
+Issues = "https://github.com/cloudmesh/cloudmesh-progress/issues"
+Changelog = "https://github.com/cloudmesh/cloudmesh-progress/blob/main/CHANGELOG.md"
 
 [tool.setuptools.packages.find]
 where = ["src/"]
