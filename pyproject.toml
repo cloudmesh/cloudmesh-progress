@@ -8,7 +8,7 @@ requires = [
 
 [project]
 name = "cloudmesh-progress"
-version = "5.0.2"
+version = "5.0.3"
 description = "A cloudmesh command called progress"
 readme = "README.md"
 requires-python = ">=3.8"
