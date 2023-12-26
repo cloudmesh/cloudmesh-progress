@@ -18,3 +18,41 @@ Cloudmesh Command progress
 
 
 
+
+
+## Manual Page
+
+<!-- START-MANUAL -->
+```
+Command progress
+================
+
+::
+
+  Usage:
+        progress PROGRESS [--status=STATUS] [--pid=PID] [--now] [KEY=VALUE...] [--sep=SEP] [--banner]
+
+  Prints a progress line of the form
+
+
+   "# cloudmesh status=ready progress=0 pid=$$ time='2022-08-05 16:29:40.228901' key1=value1 key2=value2"
+
+  Arguments:
+      PROGRESS   the progess in value from 0 to 100
+      KEY=VALUE   the key value pars to be added
+
+  Options:
+      --status=STATUS      the status [default: running]
+      --pid=PID            the PID
+      --now                add a time of now
+      --sep=SEP            separator when adding key=values
+      --banner             creates also a banner when specified [default: None]
+
+  Description:
+
+    The example
+        progress 50 --status=running --pid=101 --now user=gregor
+    produces
+        # cloudmesh status=running progress=0 pid=123 time='2022-08-05 16:29:40.228901' user=gregor
+```
+<!-- STOP-MANUAL -->
